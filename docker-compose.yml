@@ -1,0 +1,96 @@
+networks:
+  seclab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    networks:
+      seclab:
+        ipv4_address: 172.20.0.5
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_DATABASE: webapp_db
+      MYSQL_USER: webapp
+      MYSQL_PASSWORD: webapp123
+    volumes:
+      - ./webapp/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  syslog:
+    build: ./syslog-collector
+    container_name: syslog-collector
+    networks:
+      seclab:
+        ipv4_address: 172.20.0.30
+    ports:
+      - "514:514/udp"
+      - "514:514/tcp"
+    volumes:
+      - ./logs/collected:/var/log/collect
+      - ./syslog-collector/rsyslog.conf:/etc/rsyslog.conf
+    environment:
+      - WORKSPACE_ID=${WORKSPACE_ID}
+      - WORKSPACE_KEY=${WORKSPACE_KEY}
+    privileged: true
+    healthcheck:
+      test: ["CMD", "nc", "-zu", "127.0.0.1", "514"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  webapp:
+    build: ./webapp
+    container_name: webapp
+    networks:
+      seclab:
+        ipv4_address: 172.20.0.10
+    depends_on:
+      mysql:
+        condition: service_healthy
+      syslog:
+        condition: service_healthy
+    ports:
+      - "8888:80"
+    volumes:
+      - ./logs/webapp:/var/log/webapp
+    environment:
+      DB_HOST: mysql
+      DB_NAME: webapp_db
+      DB_USER: webapp
+      DB_PASS: webapp123
+      SYSLOG_HOST: 172.20.0.30
+      SYSLOG_PORT: 514
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://172.20.0.30:514"
+        tag: "webapp"
+
+  attacker:
+    build: ./attacker
+    container_name: kali-attacker
+    networks:
+      seclab:
+        ipv4_address: 172.20.0.20
+    volumes:
+      - ./attacker/scripts:/root/scripts
+      - ./logs/attacks:/var/log/attacks
+    stdin_open: true
+    tty: true
+    depends_on:
+      - webapp
+
+volumes:
+  mysql_data:
