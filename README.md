@@ -14,19 +14,19 @@ A fully containerised **offensive/defensive security lab** that generates realis
 ## Screenshots
 
 ### Incidents Dashboard
-![Incidents Dashboard](docs/images/incidents-dashboard.png)
+![Incidents Dashboard](images/incidents.png)
 
-### Incident Detail & Investigation
-![Incident Detail](docs/images/incident-detail.png)
+### SQL Injection Detection
+![SQL Injection](images/sqlinjection.png)
 
-### Analytics Rules
-![Analytics Rules](docs/images/analytics-rules.png)
+### Brute Force Detection
+![Brute Force](images/bruteforce.png)
 
 ### KQL Query Results
-![Logs Query](docs/images/logs-query.png)
+![Logs Query](images/logs.png)
 
 ### MITRE ATT&CK Coverage
-![MITRE Coverage](docs/images/mitre-coverage.png)
+![MITRE Coverage](images/mitre_mapping.png)
 
 ---
 
@@ -382,14 +382,14 @@ sentinel-soc-lab/
 ├── configs/
 │   └── azure/
 │       └── dcr-config.json
-└── docs/
-    ├── azure-setup.md
-    └── images/
-        ├── incidents-dashboard.png
-        ├── incident-detail.png
-        ├── analytics-rules.png
-        ├── logs-query.png
-        └── mitre-coverage.png
+├── docs/
+│   └── azure-setup.md
+└── images/
+    ├── incidents.png
+    ├── sqlinjection.png
+    ├── bruteforce.png
+    ├── logs.png
+    └── mitre_mapping.png
 ```
 
 ---
