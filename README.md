@@ -1,20 +1,8 @@
 # Sentinel SOC Lab
 
-A simple lab to generate fake attacks and send them to Microsoft Sentinel.
+I use this lab to generate attack traffic against a vulnerable app and follow its logs into Microsoft Sentinel.
 
-It spins up a vulnerable PHP app, a MySQL database, a Kali attacker container, and a log collector. The point is to attack the app, generate logs, and see them show up in Sentinel.
-
-This is for learning SOC detections and KQL in a safe local setup.
-
-## What this lab includes
-
-- A vulnerable web app
-- SQL injection attempts
-- Brute force login attempts
-- Port scanning
-- Web app scanning
-- File upload attempts
-- Log forwarding to Azure Sentinel
+The Docker setup runs a PHP app, MySQL, a Kali container, and a log collector. I use the resulting events to practise KQL queries.
 
 ## Quick start
 
@@ -47,18 +35,6 @@ The main containers are:
 - `mysql-db` — database used by the app
 - `syslog-collector` — collects logs and forwards them
 - `kali-attacker` — runs attack tools and scripts
-
-## Example attacks
-
-The lab can simulate:
-
-- SQL injection on login and search pages
-- Brute force login attempts
-- Nmap port scans
-- Nikto / Gobuster style web scans
-- Suspicious file upload behavior
-
-You can trigger these manually or with the scripts in the Kali container.
 
 ## Running attacks
 
@@ -149,7 +125,7 @@ docker exec -it syslog-collector /bin/bash
 - If `.env` is missing, copy `.env.example` and fill it in
 - If the web app is not starting, check `docker compose ps`
 
-## Note
+## Lab scope
 
 This lab is intentionally vulnerable and meant for learning only.
 
